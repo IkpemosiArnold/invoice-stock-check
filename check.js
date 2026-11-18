@@ -332,12 +332,14 @@ export function checkLine(L, ctx, pick = null) {
     r.srcRefs.push(...onList.words.map((w) => ({ doc: "stock", line: row.line, start: row.cell[3].start + w.start, end: row.cell[3].start + w.end, tone: "fail" })));
     let money = "";
     if (conflict.includes("volume") && onLine.ml && onList.ml && !onLine.pack && row.pack === 1) {
-      const perL = (p, ml) => (p * 1000) / ml;
+      const beer = /KEG|CASK/.test(row.buys);
+      const per = beer ? "pint" : "litre";
+      const perL = (p, ml) => (p * (beer ? ML_PER_PINT : 1000)) / ml;
       const was = perL(row.last, onList.ml);
       const now = perL(L.price, onLine.ml);
       const byBottle = pct(L.price, row.last);
       const byLitre = pct(now, was);
-      money = ` By the bottle that is ${byBottle >= 0 ? "up" : "down"} ${pct1(byBottle)} on ${gbp(row.last)}. By the litre it is ${gbp(Math.round(now))} against ${gbp(Math.round(was))}, ${byLitre >= 0 ? "up" : "down"} ${pct1(byLitre)}.`;
+      money = ` By the ${unitWord(row)} that is ${byBottle >= 0 ? "up" : "down"} ${pct1(byBottle)} on ${gbp(row.last)}. By the ${per} it is ${gbp(Math.round(now))} against ${gbp(Math.round(was))}, ${byLitre >= 0 ? "up" : "down"} ${pct1(byLitre)}.`;
       r.perLitre = { was: Math.round(was), now: Math.round(now), byBottle, byLitre };
     }
     const shortTxt = conflict.includes("volume") && r.perLitre ? `Billed as your ${sizeWords(onList)}, written ${sizeWords(onLine)}` : `Size on the line is not the size on your list`;
@@ -347,7 +349,7 @@ export function checkLine(L, ctx, pick = null) {
       `Code ${row.code} is your ${row.name}. This line says ${sizeWords(onLine)}.${money}`,
       shortTxt,
       [
-        { pick: { size: "new" }, label: `Stock it as a new item`, note: `${titleCase(L.desc)}, ${plural(L.qty, "bottle")} at ${gbp(L.price)}${onLine.ml && row.measure && /ml measure/.test(row.measure.label) ? `, ${Math.floor(onLine.ml / Number(row.measure.label.slice(0, 2)))} x ${row.measure.label.slice(0, 4)}` : ""}` },
+        { pick: { size: "new" }, label: `Stock it as a new item`, note: `${titleCase(L.desc)}, ${plural(L.qty, unitWord(row))} at ${gbp(L.price)}${onLine.ml && row.measure && /ml measure/.test(row.measure.label) ? `, ${Math.floor(onLine.ml / Number(row.measure.label.slice(0, 2)))} x ${row.measure.label.slice(0, 4)}` : ""}` },
         { pick: { size: "query" }, label: "Query with the supplier", note: "Keep the line off the stock update" },
       ],
     );
@@ -392,7 +394,7 @@ export function checkLine(L, ctx, pick = null) {
       return hold(
         "fail",
         "vat",
-        `The invoice codes this ${L.vat}, ${VAT[L.vat]}% VAT. Your list has ${row.vat}% for ${row.name}. At ${row.vat}% the VAT on this line is ${gbp(Math.abs(at20))}, and the invoice ${at20 > 0 ? "charges none" : "charges more"}.`,
+        `The invoice codes this ${L.vat}, ${VAT[L.vat]}% VAT. Your list has ${row.vat}% for ${row.name}. ${at20 > 0 ? `At ${row.vat}% the VAT on this line is ${gbp(at20)}, and the invoice charges none.` : `At ${row.vat}% there is no VAT on this line, and the invoice charges ${gbp(-at20)}.`}`,
         `Invoice ${VAT[L.vat]}% VAT, your list ${row.vat}%`,
         [
           { pick: { vat: "stock" }, label: "Stock it, flag the VAT for accounts", note: `Stock cost is the net ${gbp(L.net)} either way` },

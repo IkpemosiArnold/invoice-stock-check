@@ -22,7 +22,7 @@ Each invoice's printed totals are also summed from its own lines: net at each ra
 
 The sample: 9 of 16 lines are ready, £680.85 net. Seven wait for the manager:
 
-- **Premium vodka:** the code is the 70cl bottle, the line says 1 litre. By the bottle that is up 33.5% on £14.20. By the litre it is £18.95 against £20.29, down 6.6%.
+- **Premium vodka:** the code is the 70cl bottle, the line says 1 litre. By the bottle that is up 33.5% on £24.50. By the litre it is £32.70 against £35.00, down 6.6%.
 - **Lager bottles:** charged for 3 cases, 2 received. One case short, £26.40 net, £31.68 with VAT.
 - **Tonic water:** coded Z, 0% VAT; the stock list has 20%. £6.72 of VAT at stake.
 - **Guest ale:** not on the stock list by code or description.
@@ -56,7 +56,7 @@ The proposal would then pass through the same checks, so a manager only opens th
 node --test
 ```
 
-Needs Node 20 or later. No dependencies. 20 tests cover the sample result, the arithmetic on every ready line, each invoice's printed totals (and a total that does not add up), cases into bottles, bags and each, imperial pints in kegs and casks, 25ml measures, the three new prices and their per-measure change, the 70cl code on a 1 litre line, the VAT mismatch, the short delivery, the item not found, the manager's picks and what they record, stocking all of a short line, that every reference points at the exact text it claims, reading sizes, reading lines, pasted lines (a wrong unit, no code, 50L against 11G, a bad sum, an unknown item, junk, zero, a repeat, no VAT code) and the export.
+Needs Node 20 or later. No dependencies. 22 tests cover the sample result, the arithmetic on every ready line, each invoice's printed totals (and a total that does not add up), cases into bottles, bags and each, imperial pints in kegs and casks, 25ml measures, the three new prices and their per-measure change, the 70cl code on a 1 litre line, the VAT mismatch, the short delivery, the item not found, the manager's picks and what they record, stocking all of a short line, that every reference points at the exact text it claims, reading sizes, reading lines, pasted lines (a wrong unit, no code, 50L against 11G, a bad sum, an unknown item, junk, zero, a repeat, no VAT code), a size change on a cask, VAT charged on a zero-rated item, and the export.
 
 ## Open the page locally
 

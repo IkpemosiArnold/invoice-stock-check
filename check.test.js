@@ -29,14 +29,14 @@ test("every ready line: quantity times price is the line total, and the price is
 test("each invoice's printed totals match its own lines", () => {
   const r = checkAll(sample);
   for (const t of r.totals) assert.ok(t.ok, t.inv.number);
-  assert.deepEqual(r.totals.map((t) => t.want.total), [57936, 95184, 22773]);
-  // 454.80 at 20% is 90.96; 793.20 is 158.64; 13.90 is 2.78
-  assert.deepEqual(r.totals.map((t) => t.want.vatS), [9096, 15864, 278]);
+  assert.deepEqual(r.totals.map((t) => t.want.total), [67836, 95184, 22773]);
+  // 537.30 at 20% is 107.46; 793.20 is 158.64; 13.90 is 2.78
+  assert.deepEqual(r.totals.map((t) => t.want.vatS), [10746, 15864, 278]);
 });
 
 test("a printed total that does not add up fails", () => {
   const s = clone();
-  s.inv1[s.inv1.length - 1] = "Total due 579.46";
+  s.inv1[s.inv1.length - 1] = "Total due 678.46";
   const t = checkTotals(readInvoice("inv1", s.inv1));
   assert.equal(t.ok, false);
   assert.equal(t.rows.find((x) => x.key === "total").match, false);
@@ -93,9 +93,9 @@ test("a code for the 70cl bottle on a line that says 1 litre is held, with per-b
   const v = byCode(r, "PD-2207");
   assert.equal(v.kind, "size");
   assert.equal(v.state, "fail");
-  assert.match(v.why, /up 33\.5% on £14\.20/); // 18.95 / 14.20 = 1.3345
-  assert.match(v.why, /£18\.95 against £20\.29, down 6\.6%/); // 14.20 / 0.7 = 20.29 a litre
-  assert.equal(v.perLitre.was, 2029);
+  assert.match(v.why, /up 33\.5% on £24\.50/); // 32.70 / 24.50 = 1.3347
+  assert.match(v.why, /£32\.70 against £35\.00, down 6\.6%/); // 24.50 / 0.7 = 35.00 a litre
+  assert.equal(v.perLitre.was, 3500);
 });
 
 test("VAT coded zero on an item your list has at 20% is held, with the VAT at stake", () => {
@@ -142,8 +142,8 @@ test("the manager's picks settle held lines and are recorded", () => {
   const vodka = r.lines.find((l) => l.n === 3);
   assert.equal(vodka.item.isNew, true);
   assert.equal(vodka.item.measure.count, 40);
-  // 680.85 + 103.50 + 113.70 + 33.60 + 52.80 + 98.00 + 36.50
-  assert.equal(r.value, 68085 + 10350 + 11370 + 3360 + 5280 + 9800 + 3650);
+  // 680.85 + 103.50 + 196.20 + 33.60 + 52.80 + 98.00 + 36.50
+  assert.equal(r.value, 68085 + 10350 + 19620 + 3360 + 5280 + 9800 + 3650);
   for (const n of [2, 3, 5, 6, 10, 12]) assert.ok(r.lines.find((l) => l.n === n).settled, `line ${n}`);
   const csv = stockCsv(r);
   assert.match(csv, /New cost accepted by the manager/);
@@ -230,4 +230,16 @@ test("the export lists only ready lines and adds up", () => {
   assert.equal(rows.length, 9);
   const net = rows.reduce((t, row) => t + pence(row.split(",").at(-2)), 0);
   assert.equal(net, 68085);
+});
+
+test("a size change on a cask is shown per cask and per pint, never per bottle", () => {
+  const [l] = checkPasted("GB-B09 BEST BITTER 18G CASK 1 CASK 190.00 190.00 S", sample);
+  assert.match(l.why, /By the cask that is up 97\.9% on £96\.00\. By the pint it is £1\.32 against £1\.33, down 1\.0%\./);
+  assert.match(l.options[0].note, /1 cask at £190\.00/);
+  assert.doesNotMatch(l.why + l.options[0].note, /bottle/);
+});
+
+test("VAT charged on an item your list has at 0% says what the invoice charges", () => {
+  const [l] = checkPasted("FF-11850 MATURE CHEDDAR 5KG 1 EA 34.75 34.75 S", sample);
+  assert.match(l.why, /At 0% there is no VAT on this line, and the invoice charges £6\.95\./);
 });
