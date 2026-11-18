@@ -1,0 +1,9 @@
+{
+  "name": "invoice-stock-check",
+  "version": "0.1.0",
+  "private": true,
+  "type": "module",
+  "description": "Supplier invoices checked line by line against a venue's stock list and goods-in sheet, every figure pointing at the line and row it came from.",
+  "scripts": { "test": "node --test" },
+  "license": "MIT"
+}

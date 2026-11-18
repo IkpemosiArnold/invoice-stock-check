@@ -1,0 +1,81 @@
+<!doctype html>
+<html lang="en-GB">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Stock In</title>
+<meta name="description" content="Supplier invoices checked line by line against a pub's stock list and goods-in sheet. Cases become bottles, kegs become pints, and every figure points at the line and row it came from. Plain code holds back what it cannot settle.">
+<meta name="color-scheme" content="light dark">
+<meta name="theme-color" media="(prefers-color-scheme: light)" content="#fafaf7">
+<meta name="theme-color" media="(prefers-color-scheme: dark)" content="#131312">
+<link rel="icon" href="data:,">
+<link rel="preload" href="fonts/geist.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="preload" href="fonts/newsreader.woff2" as="font" type="font/woff2" crossorigin>
+<link rel="stylesheet" href="style.css?v=1">
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true">
+  <symbol id="i-check" viewBox="0 0 16 16"><path d="M3.5 8.5l3 3 6-7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+  <symbol id="i-cross" viewBox="0 0 16 16"><path d="M4.5 4.5l7 7M11.5 4.5l-7 7" fill="none" stroke="currentColor" stroke-width="1.75" stroke-linecap="round"/></symbol>
+  <symbol id="i-none" viewBox="0 0 16 16"><circle cx="8" cy="8" r="5.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-dasharray="2.2 2.2"/></symbol>
+  <symbol id="i-chev" viewBox="0 0 16 16"><path d="M6 3.5L10.5 8 6 12.5" fill="none" stroke="currentColor" stroke-width="1.5" stroke-linecap="round" stroke-linejoin="round"/></symbol>
+</svg>
+<main class="shell">
+  <div class="sheet-col">
+    <header class="top">
+      <p class="mark">Stock In <span class="tag">Sample data</span></p>
+      <h1>Every stock line points at the invoice line behind it.</h1>
+      <p class="sub">Three made-up supplier invoices for one pub. Plain code, no model. What it cannot settle, the manager decides.</p>
+    </header>
+
+    <section class="reading" aria-labelledby="summary">
+      <p class="summary" id="summary" role="status"><span class="sum-main">Checking</span></p>
+      <button type="button" class="btn text why-btn" id="why-btn" aria-expanded="false" aria-controls="chain">What ready means</button>
+      <div class="why-text" id="chain" hidden>
+        <p>A line is ready when its sum adds up, its code is one item on the stock list, the size it is written in is that item's size, it is charged in the unit you buy it in, its VAT code matches your list, goods in counted what was charged, and the price is the last cost on your list.</p>
+        <p>Cases become bottles, bags or each by the pack on your list. Kegs and casks show the cost of a pint, spirits the cost of a 25ml measure. Anything else waits for the manager with the reason and the choices.</p>
+      </div>
+      <div id="groups" class="groups"></div>
+    </section>
+  </div>
+
+  <aside class="evidence-col" id="side" aria-live="polite"></aside>
+
+  <section class="tool" id="update-tool" aria-labelledby="update-h">
+    <h2 id="update-h">The stock update</h2>
+    <p class="tool-sub" id="update-sub"></p>
+    <div class="actions top-actions">
+      <button type="button" id="approve" class="btn primary">Approve the ready lines</button>
+      <button type="button" id="dl" class="btn text" disabled>Download the stock update</button>
+      <button type="button" id="reset" class="btn text">Reset sample</button>
+    </div>
+  </section>
+
+  <section class="tool" id="own-tool" aria-labelledby="own-h">
+    <h2 id="own-h">Try your own lines</h2>
+    <p class="tool-sub">One invoice line each: code, description, quantity, unit, price, line total and VAT code. Checked in this browser against the sample stock list.</p>
+    <label class="sr" for="own-in">Invoice lines</label>
+    <textarea id="own-in" rows="6" spellcheck="false" autocomplete="off" autocapitalize="characters" placeholder="PD-1102 HOUSE VODKA 70CL 12 BTL 13.40 160.80 S&#10;GB-I30 IPA 30L KEG 2 KEG 148.00 296.00 S"></textarea>
+    <div class="actions">
+      <button type="button" id="own-check" class="btn primary">Check them</button>
+      <button type="button" id="own-sample" class="btn text">Fill in an example</button>
+    </div>
+    <p id="own-error" class="error" role="alert" hidden></p>
+    <div id="own-out"></div>
+  </section>
+
+  <section class="tool" id="src-tool" aria-labelledby="src-h">
+    <h2 id="src-h">The invoices and the lists</h2>
+    <p class="tool-sub">Three invoices as the text a PDF gives when you copy it out, the pub's stock list, and the goods-in sheet filled in at the door.</p>
+    <button type="button" class="btn text" id="src-btn" aria-expanded="false" aria-controls="src-out">Show them</button>
+    <div id="src-out" hidden></div>
+  </section>
+
+  <footer class="foot" id="foot">
+    <p>For pubs, bars and restaurants taking supplier invoices into stock. Built by Arnold Ikpemosi Adeyemi. Made-up pub, suppliers, codes and prices.</p>
+    <p><a href="https://ikpemosi.work">ikpemosi.work</a></p>
+  </footer>
+</main>
+<script type="module" src="app.js?v=1"></script>
+</body>
+</html>
